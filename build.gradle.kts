@@ -5,7 +5,16 @@ plugins {
 }
 
 group = "io.taskrunner"
-version = "1.0-SNAPSHOT"
+
+tasks.jar {
+    manifest { attributes["Main-Class"] = application.mainClass } // Provided we set it up in the application plugin configuration
+    val dependencies = configurations
+        .runtimeClasspath
+        .get()
+        .map(::zipTree) // OR .map { zipTree(it) }
+    from(dependencies)
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
 
 repositories {
     mavenCentral()
@@ -23,9 +32,13 @@ tasks.test {
 }
 
 kotlin {
-    jvmToolchain(8)
+    jvmToolchain(17)
 }
 
 application {
     mainClass.set("io.taskrunner.MainKt")
+}
+
+tasks {
+    create("stage").dependsOn("installDist")
 }
