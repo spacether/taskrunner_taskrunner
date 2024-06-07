@@ -24,14 +24,17 @@ class Worker {
                 "FailingTask.kt" -> FailingTask().run()
                 else -> throw RuntimeException("Unknown task fileName ${taskMessage.task.fileName}")
             }
-            print(taskMessage)
+            println(taskMessage)
         }
     }
 }
 
 fun main() {
     val factory = ConnectionFactory()
-    factory.host = "localhost"
+    val uri = System.getenv("CLOUDAMQP_URL") ?: "amqp://guest:guest@localhost"
+    factory.setUri(uri);
+    factory.setRequestedHeartbeat(30);
+    factory.setConnectionTimeout(30);
     val connection = factory.newConnection()
     val channel = connection.createChannel()
 
@@ -58,9 +61,9 @@ fun main() {
                 } else {
                     println(" [x] Final failing try for '$taskMessage'")
                 }
-                print(e.message)
+                println(e.message)
             } finally {
-                println(" [x] Done")
+                println(" [x] Done with task.name=${taskMessage.task.name}")
                 channel.basicAck(envelope.deliveryTag, false)
             }
         }
