@@ -1,1 +1,1 @@
-web: java -jar build/libs/taskrunner_taskrunner.jar
+worker: java -jar build/libs/taskrunner.jar
