@@ -1,1 +1,1 @@
-rootProject.name = "taskrunner_taskrunner"
+rootProject.name = "taskrunner"
